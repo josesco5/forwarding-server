@@ -22,21 +22,19 @@ app.post('/rest', jsonParser, (req, res) => {
 
 app.post('/soap', xmlParser, (req, res) => {
   console.log('Received XML', req.body)
+  const requestBody = req.body
   const destinyUrl = req.get('Destiny-Url')
   const soapAction = req.get('SOAPAction')
   const headers = {
     'Content-Type': 'application/xml',
     'SOAPAction': soapAction
   }
-  fetch(destinyUrl, { headers, method: 'POST' })
-    .then((response) => {
-      console.log(response)
+  fetch(destinyUrl, { headers, method: 'POST', body: requestBody })
+    .then((response) => response.text())
+    .then((data) => {
       res.set('Content-Type', 'application/xml')
-      res.send(req.body)
+      res.send(data)
     })
-
-  // res.set('Content-Type', 'application/xml')
-  // res.send(req.body)
 })
 
 app.listen(port, () => console.log(`App listening at http://localhost:${port}`))
